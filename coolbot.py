@@ -50,15 +50,12 @@ async def test(ctx):
 @bot.bridge_command()
 async def gen_random_num(ctx):
     await ctx.send(f"random num between 0 and 6: \n{_gen_num()[0]}")
-    return "what?"
 
 @bot.bridge_command()
 async def gen_random_num_to(ctx, num):
     num: int = await _int(num)
     _num = _gen_num(..., num)
     await ctx.send(f"{_num[1]}{_gen_prefix(_num[1])} random num is: \n**{_num[0]}**")
-    return "is"
-
     
 @bot.bridge_command()
 async def gen_n_random_nums(ctx, num):
@@ -69,6 +66,20 @@ async def gen_n_random_nums(ctx, num):
     _beginning_prefix = f"{_nums[0][1]}{_gen_prefix(_nums[0][1])}"
     _ending_prefix = f"{_nums[-1][1]}{_gen_prefix(_nums[-1][1])}"
     await ctx.send(f"{_beginning_prefix} to {_ending_prefix} random numbers: \n{nums_str}")
+
+@bot.bridge_command()
+async def set_default_low_num(ctx, num):
+    num: int = await _int(ctx, num)
+    global _defaultLowNum
+    _defaultLowNum = num
+    await ctx.send(f"Default low number is now: {_defaultLowNum}\nNow, random numbers will be within the range of [{_defaultLowNum}, {_defaultHighNum}]")
+
+@bot.bridge_command()
+async def set_default_high_num(ctx, num):
+    num: int = await _int(ctx, num)
+    global _defaultHighNum
+    _defaultHighNum = num
+    await ctx.send(f"Default high number is now: {_defaultHighNum}\nNow, random numbers will be within the range of [{_defaultLowNum}, {_defaultHighNum}]")
 
 @bot.bridge_command()
 async def history(ctx):
