@@ -1,7 +1,8 @@
-from __future__ import annotations
+# from __future__ import annotations
 from pydoc import describe
 import random
 import textwrap
+from types import EllipsisType
 from typing import Tuple
 import discord
 from discord.ext import bridge
@@ -14,16 +15,33 @@ _secrets = dotenv_values(".env", verbose=True)
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(
+bot = discord.Bot(
     command_prefix="$!", intents=intents)
 default_decorator = commands.command
-raw_gen_decorator = bot.create_group("raw_number_gen", "Use these functions to generate random numbers",).command
+
+raw_gen = bot.create_group("raw_number_gen", "Use these functions to generate random numbers",)
+raw_gen_decorator = raw_gen.command
+raw_gen_defaults = raw_gen.create_subgroup("defaults", "Use these functions to change the default values for the raw number generator",)
+raw_gen_defaults_decorator = raw_gen_defaults.command
+raw_gen_history = raw_gen.create_subgroup("history", "Use these functions to view the history of the raw number generator",)
+raw_gen_history_decorator = raw_gen_history.command
+
+# create slash command group with bot.create_group
+greetings = bot.create_group("greetings", "Greet people")
+
+@greetings.command()
+async def hello(ctx):
+  await ctx.respond(f"Hello, {ctx.author}!")
+
+@greetings.command()
+async def bye(ctx):
+  await ctx.respond(f"Bye, {ctx.author}!")
 
 _previousNums = []
 _defaultLowNum = 0
 _defaultHighNum = 6
 
-def _gen_num(low: int | Ellipsis = ..., high: int | Ellipsis = ...) -> Tuple[int, int]:
+def _gen_num(low: int | EllipsisType = ..., high: int | EllipsisType = ...) -> Tuple[int, int]:
   low = low if low is not Ellipsis else _defaultLowNum # provide defaults
   high = high if high is not Ellipsis else _defaultHighNum # provide defaults
   _num = random.randint(low, high)
@@ -70,28 +88,28 @@ async def gen_n_random_nums(ctx, num):
     _ending_prefix = f"{_nums[-1][1]}{_gen_prefix(_nums[-1][1])}"
     await ctx.respond(f"Generating {num} random numbers, which are the {_beginning_prefix} to {_ending_prefix} numbers generated (see /history): \n{nums_str}")
 
-@raw_gen_decorator()
+@raw_gen_defaults_decorator()
 async def set_default_low_num(ctx, num):
     num: int = await _int(ctx, num)
     global _defaultLowNum
     _defaultLowNum = num
     await ctx.respond(f"Default low number is now: {_defaultLowNum}\nNow, random numbers will be within the range of [{_defaultLowNum}, {_defaultHighNum}]")
 
-@raw_gen_decorator()
+@raw_gen_defaults_decorator()
 async def set_default_high_num(ctx, num):
     num: int = await _int(ctx, num)
     global _defaultHighNum
     _defaultHighNum = num
     await ctx.respond(f"Default high number is now: {_defaultHighNum}\nNow, random numbers will be within the range of [{_defaultLowNum}, {_defaultHighNum}]")
 
-@raw_gen_decorator()
+@raw_gen_defaults_decorator()
 async def reset_defaults(ctx):
     global _defaultLowNum, _defaultHighNum
     _defaultLowNum = 0
     _defaultHighNum = 6
     await ctx.respond(f"Defaults have been reset to: [{_defaultLowNum}, {_defaultHighNum}]")
 
-@raw_gen_decorator()
+@raw_gen_history_decorator()
 async def history(ctx):
     _string = ""
     for i, num in enumerate(_previousNums):
@@ -104,7 +122,7 @@ async def history(ctx):
     else:
         await ctx.respond(f"History is empty! May have /clear ed history")
 
-@raw_gen_decorator()
+@raw_gen_history_decorator()
 async def clear_history(ctx):
     _previousNums.clear()
     await ctx.respond("History cleared :smile:")
