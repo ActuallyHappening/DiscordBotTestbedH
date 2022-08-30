@@ -22,6 +22,7 @@ bot = bridge.Bot(
 bot.add_cog(BasicCommands(bot))
 
 try:
+  print("Beginning ...")
   bot.run(_secrets["DISCORD_BOT_TOKEN"])
 except Exception as e:
   print("ERROR, if shard permissions error please give the bot proper permissions!")
