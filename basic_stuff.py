@@ -10,7 +10,7 @@ class BasicCommands(commands.Cog):
   _slot_machine_history: "List[List[int]]" = []
   
   
-  @decorator(description="Play roulette! Spin to generate a random number between 0 and 6")
+  @decorator(description="Play roulette! Spin to generate a random number between 0 and 6; Good luck!")
   async def roulette(self, ctx):
     _num = random.randint(0, 6) # Generate random number
     self._roulette_history.append(_num) # Add to history list
