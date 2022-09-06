@@ -9,6 +9,11 @@ Then, copy-paste `git clone https://github.com/ActuallyHappening/DiscordBotTestb
 ## Python 3:
 To execute this bot, first install `python`. Just search up 'How to install python` of see (https://www.python.org/)[the python docs].
 
+## Install requirements
+`pip install py-cord`
+
+`pip install python-dotenv`
+
 ## Execution:
 Run by putting a file called `.env` in the root directory with appropriate values as detailed below (eventually).
 Then, `cd` into the root directory of this repository in the terminal and run `python3 -m coolbot`
